@@ -30,7 +30,7 @@ db/migrations/new:
 .PHONY: db/migrations/up
 db/migrations/up: confirm
 	@echo 'Running up migrations'
-	migrate -path=./migrations -database=${GREENLIGHT_DB_DSN}
+	migrate -path=./migrations -database=${GREENLIGHT_DB_DSN} up
 
 ## audit: tidy dependencies and format, vet and test all code
 .PHONY: audit
