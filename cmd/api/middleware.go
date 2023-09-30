@@ -25,6 +25,9 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 	})
 }
 
+// authenticate middleware checks the Authorization Header
+// if no Authorization Header is found, it sets anonymous user into the request context
+// otherwise validates the bearer token and sets a proper user for the given token from the Authorization Header
 func (app *application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Authorization")
@@ -61,6 +64,9 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 	})
 }
 
+// requireAuthenticatedUser middleware makes sure that the user in context is proper user and not anonymous user
+// sends error response if anonymous user
+// does not matter if user is activated or not
 func (app *application) requireAuthenticatedUser(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := app.contextGetUser(r)
@@ -74,6 +80,8 @@ func (app *application) requireAuthenticatedUser(next http.HandlerFunc) http.Han
 	})
 }
 
+// requires user in context to be authenticated ( with proper user, i.e. no anonymous user) and activated
+// sends error response otherwise
 func (app *application) requireActivatedUser(next http.HandlerFunc) http.HandlerFunc {
 	fn := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := app.contextGetUser(r)
@@ -89,6 +97,7 @@ func (app *application) requireActivatedUser(next http.HandlerFunc) http.Handler
 	return app.requireAuthenticatedUser(fn)
 }
 
+// requires user in context to be authenticated(with proper user, i.e. no anonymous user), activated and have proper permission
 func (app *application) requirePermission(code string, next http.HandlerFunc) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		user := app.contextGetUser(r)
