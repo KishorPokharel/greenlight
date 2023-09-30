@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -62,7 +61,11 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 		app.serverErrorResponse(w, r, err)
 		return
 	}
-	fmt.Println("TokenPlainText: ", token.PlainText)
+	// Print activation token to stdout because no email is sent
+	app.logger.PrintInfo("Activation Token", map[string]string{
+		"token": token.PlainText,
+	})
+	// fmt.Println("TokenPlainText: ", token.PlainText)
 
 	app.background(func() {
 		data := map[string]interface{}{
@@ -122,6 +125,13 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	err = app.writeJSON(w, http.StatusOK, envelope{"user": user}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+func (app *application) userProfileHandler(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetUser(r)
+	err := app.writeJSON(w, http.StatusOK, envelope{"user": user}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
