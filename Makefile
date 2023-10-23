@@ -61,3 +61,8 @@ build/api:
 .PHONY: clean
 clean:
 	rm -rf bin
+
+## des: delete expired sessions
+.PHONY: des
+des:
+	psql ${GREENLIGHT_DB_DSN} -c "delete from tokens where expiry < now()"
