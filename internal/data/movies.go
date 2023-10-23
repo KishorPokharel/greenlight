@@ -11,6 +11,8 @@ import (
 	"github.com/lib/pq"
 )
 
+const timeout = 10 * time.Second
+
 type Movie struct {
 	ID        int64     `json:"id"`
 	CreatedAt time.Time `json:"-"`
@@ -48,7 +50,7 @@ func (m MovieModel) Insert(movie *Movie) error {
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, version`
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	args := []interface{}{movie.Title, movie.Year, movie.Runtime, pq.Array(movie.Genres)}
@@ -64,7 +66,7 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 
 	var movie Movie
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(
@@ -97,7 +99,7 @@ func (m MovieModel) Update(movie *Movie) error {
 
 	args := []interface{}{movie.Title, movie.Year, movie.Runtime, pq.Array(movie.Genres), movie.ID, movie.Version}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&movie.Version)
@@ -122,7 +124,7 @@ func (m MovieModel) Delete(id int64) error {
 		DELETE FROM movies
 		WHERE id = $1`
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	result, err := m.DB.ExecContext(ctx, query, id)
@@ -155,7 +157,7 @@ func (m MovieModel) GetAll(
         ORDER BY %s %s, id ASC
         LIMIT $3 OFFSET $4`, filters.sortColumn(), filters.sortDirection())
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	args := []interface{}{title, pq.Array(genres), filters.limit(), filters.offset()}
