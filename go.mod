@@ -1,6 +1,6 @@
 module github.com/KishorPokharel/greenlight
 
-go 1.24.2
+go 1.24.5
 
 require (
 	github.com/felixge/httpsnoop v1.0.4
