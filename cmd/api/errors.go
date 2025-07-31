@@ -12,7 +12,7 @@ func (app *application) logError(r *http.Request, err error) {
 	})
 }
 
-func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, status int, message interface{}) {
+func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, status int, message any) {
 	data := envelope{
 		"error": message,
 	}

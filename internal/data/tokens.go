@@ -67,7 +67,7 @@ func (m TokenModel) Insert(token *Token) error {
 		INSERT INTO tokens (hash, user_id, expiry, scope)
 		VALUES ($1, $2, $3, $4)`
 
-	args := []interface{}{token.Hash, token.UserId, token.Expiry, token.Scope}
+	args := []any{token.Hash, token.UserId, token.Expiry, token.Scope}
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 

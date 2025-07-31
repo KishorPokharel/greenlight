@@ -26,7 +26,7 @@ func New(host string, port int, username, password, sender string) Mailer {
 	}
 }
 
-func (m *Mailer) Send(recipient, templateFile string, data interface{}) error {
+func (m *Mailer) Send(recipient, templateFile string, data any) error {
 	tmpl, err := template.ParseFS(templateFS, "templates/"+templateFile)
 	if err != nil {
 		return err

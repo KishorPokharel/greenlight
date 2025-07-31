@@ -68,7 +68,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 	// fmt.Println("TokenPlainText: ", token.PlainText)
 
 	app.background(func() {
-		data := map[string]interface{}{
+		data := map[string]any{
 			"activationToken": token.PlainText,
 			"userID":          user.ID,
 		}
